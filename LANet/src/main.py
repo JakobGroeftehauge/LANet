@@ -5,7 +5,7 @@ import tensorflow as tf
 from model import relativeHDR
 
 parser = argparse.ArgumentParser(description='')
-parser.add_argument('--phase', dest='phase', default='train', help='train, test')
+parser.add_argument('--phase', dest='phase', default='train', help='train, test, convert')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--gpu', dest='gpu', default='', help='GPU id to use')
 
@@ -43,7 +43,7 @@ def main(_):
             os.makedirs(args.checkpoint_dir)
         if not os.path.exists(args.sample_dir):
             os.makedirs(args.sample_dir)
-    else:
+    elif args.phase == 'test':
         if not os.path.exists(args.out_dir):
             os.makedirs(args.out_dir)
 
@@ -51,7 +51,12 @@ def main(_):
     tfconfig.gpu_options.allow_growth = True
     with tf.Session(config=tfconfig) as sess:
         model = relativeHDR(sess, args)
-        model.train() if args.phase == 'train' else model.test()
-
+        if args.phase == 'train':
+            model.train()
+        elif args.phase == 'convert':
+            model.convert()
+        else:
+            model.test()
+        
 if __name__ == '__main__':
     tf.app.run()

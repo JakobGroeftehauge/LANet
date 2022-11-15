@@ -88,6 +88,25 @@ class relativeHDR(object):
             self.test_L = tf.placeholder(tf.float32, [None, self.args.test_height, self.args.test_width, 3], name='test_L')
             self.msk_att, self.mask, self.test_H, _ = self.generator(self.test_L, is_training=False, reuse=False, name="generator")
 
+    def convert(self): # save training check point som inference check point. 
+        init_op = tf.global_variables_initializer()
+        self.sess.run(init_op)
+
+        if self.load(self.args.checkpoint_dir):
+            print(" [*] Load SUCCESS")
+        else:
+            print(" [!] Load failed...")
+        
+        self.save(self.args.checkpoint_dir, self.counter)
+
+        converter = lite.TFLiteConverter.from_session(self.sess, in_tensors, out_tensors)
+        converter.optimizations = [tf.lite.Optimize.DEFAULT]
+        converter.target_spec.supported_types = [tf.lite.constants.FLOAT16]
+        tflite_model = converter.convert()
+        open("tflite-test.tflite", "wb").write(tflite_model)
+
+        return 
+
 
     def test(self):
         init_op = tf.global_variables_initializer()
