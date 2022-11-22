@@ -22,6 +22,8 @@ class relativeHDR(object):
         self._build_model()
         self.saver = tf.train.Saver()
         self.counter = 0
+        self.verbose = self.args.verbose
+
 
 
     def _build_model(self):
@@ -78,11 +80,11 @@ class relativeHDR(object):
             g_loss_sum = tf.summary.scalar("generator/g_loss", self.g_loss)
             self.g_sum = tf.summary.merge([g_loss_l2_sum, g_loss_mask_sum, g_loss_color_sum, g_loss_sum])
 
-       
-            t_vars = tf.trainable_variables()
-            self.g_vars = [var for var in t_vars if 'generator' in var.name]
-            for var in t_vars:
-                print(var.name)
+            if self.verbose:
+                t_vars = tf.trainable_variables()
+                self.g_vars = [var for var in t_vars if 'generator' in var.name]
+                for var in t_vars:
+                    print(var.name)
 
         else:
             self.test_L = tf.placeholder(tf.float32, [None, self.args.test_height, self.args.test_width, 3], name='test_L')

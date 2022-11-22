@@ -42,7 +42,8 @@ def load_train_data(image_path, crop_scale=0.75, height=256, width=256):
     LDR = np.maximum(1.0, LDR)
     LDR = sRGB2linear(LDR)
     LDR_I = np.mean(LDR, axis=2)
-    mask = np.where(LDR_I > 0.83, 0, 1)  
+    mask = np.where(LDR_I > 0.83, 0, 1) 
+    mean_LDR = np.mean(mask * LDR_I)
     LDR = LDR * 2 - 1
 
     # pre-processing for HDR image

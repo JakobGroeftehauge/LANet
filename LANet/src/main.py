@@ -8,6 +8,7 @@ parser = argparse.ArgumentParser(description='')
 parser.add_argument('--phase', dest='phase', default='train', help='train, test, convert')
 parser.add_argument('--checkpoint_dir', dest='checkpoint_dir', default='./checkpoint', help='models are saved here')
 parser.add_argument('--gpu', dest='gpu', default='', help='GPU id to use')
+parser.add_argument('--verbose', dest='verbose', type=bool, default=False, help='Write info to stdout: 1: true, 0: false')
 
 # testing args
 parser.add_argument('--test_dir', dest='test_dir', default='./test', help='path of the test dataset')
