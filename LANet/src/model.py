@@ -157,10 +157,10 @@ class relativeHDR(object):
 
         dataL = sorted(glob('{}/LDR/*.*'.format(self.args.train_dir)))
         dataH = ['{}/HDR/'.format(self.args.train_dir) \
-                 + path.split('/')[-1][:-7] + '.exr' for path in dataL]
+                 + path.split('/')[-1][:-4] + '.hdr' for path in dataL]
         dataLH = list(zip(dataL, dataH))
 
-        splitPos = self.args.batch_size * 10
+        splitPos = self.args.batch_size * 2 # Take out 2 batches for validation
         trainLH = dataLH[splitPos:]
         validLH = dataLH[:splitPos]
 
@@ -229,7 +229,7 @@ class relativeHDR(object):
                     self.writer.add_summary(g_valid_sum, self.counter)
 
                     
-                    self.sample_model(self.args.sample_dir, epoch, self.counter)
+                    #self.sample_model(self.args.sample_dir, epoch, self.counter)
 
                 # save model every save frequency
                 if np.mod(self.counter, self.args.save_freq) == 2:
