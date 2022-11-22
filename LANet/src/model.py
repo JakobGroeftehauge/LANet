@@ -19,10 +19,12 @@ class relativeHDR(object):
         self.discriminator = discriminator
         self.generator = generator_unet
 
+        self.verbose = self.args.verbose
+
+
         self._build_model()
         self.saver = tf.train.Saver()
         self.counter = 0
-        self.verbose = self.args.verbose
 
 
 
@@ -80,9 +82,9 @@ class relativeHDR(object):
             g_loss_sum = tf.summary.scalar("generator/g_loss", self.g_loss)
             self.g_sum = tf.summary.merge([g_loss_l2_sum, g_loss_mask_sum, g_loss_color_sum, g_loss_sum])
 
+            t_vars = tf.trainable_variables()
+            self.g_vars = [var for var in t_vars if 'generator' in var.name]
             if self.verbose:
-                t_vars = tf.trainable_variables()
-                self.g_vars = [var for var in t_vars if 'generator' in var.name]
                 for var in t_vars:
                     print(var.name)
 
@@ -231,11 +233,14 @@ class relativeHDR(object):
                     self.writer.add_summary(g_valid_sum, self.counter)
 
                     
-                    #self.sample_model(self.args.sample_dir, epoch, self.counter)
+                    #self.sample_model(self.args.sample_dir, epoch, self.counter)  #TODO - decide if test should be incorporated.
 
                 # save model every save frequency
                 if np.mod(self.counter, self.args.save_freq) == 2:
                     self.save(self.args.checkpoint_dir, self.counter)
+
+        print("Saving final model with number: ", str(self.counter))
+        self.save(self.args.checkpoint_dir, self.counter)
 
         # Stop threads
         print("Shutting down threads...")
@@ -247,7 +252,6 @@ class relativeHDR(object):
         # Wait for threads to finish
         print("Waiting for threads...")
         coord.join(threads)
-
         self.writer.close()
         self.sess.close()
 
