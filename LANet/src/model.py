@@ -103,7 +103,7 @@ class relativeHDR(object):
         
         self.save(self.args.checkpoint_dir, self.counter)
         print("Saved checkpoint with counter: ", self.counter)
-        self.freeze_ckpt_graph_and_save(self.args.checkpoint_dir, "generator/out/Conv/Conv2D")
+        freeze_ckpt_graph_and_save(self.args.checkpoint_dir, "generator/out/Conv/Conv2D")
         return 
 
 
@@ -435,7 +435,7 @@ def freeze_ckpt_graph_and_save(model_dir, output_node_names):
                     del node.input[1]
 
         tf.import_graph_def(output_graph_def, name='')
-        tf.train.write_graph(output_graph_def, './', 'good_frozen.pb', as_text=False)
+        tf.train.write_graph(output_graph_def, model_dir + '/', 'LANet_frozen.pb', as_text=False)
         print("%d ops in the final graph." % len(output_graph_def.node))
 
     return 
