@@ -102,13 +102,7 @@ class relativeHDR(object):
             print(" [!] Load failed...")
         
         self.save(self.args.checkpoint_dir, self.counter)
-
-        converter = lite.TFLiteConverter.from_session(self.sess, in_tensors, out_tensors)
-        converter.optimizations = [tf.lite.Optimize.DEFAULT]
-        converter.target_spec.supported_types = [tf.lite.constants.FLOAT16]
-        tflite_model = converter.convert()
-        open("tflite-test.tflite", "wb").write(tflite_model)
-
+        print("Saved checkpoint with counter: ", self.counter)
         return 
 
 
@@ -264,6 +258,7 @@ class relativeHDR(object):
         self.saver.save(self.sess,
                         os.path.join(checkpoint_dir, model_name),
                         global_step=step)
+
 
 
     def load(self, checkpoint_dir):
