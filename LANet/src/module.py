@@ -1,4 +1,3 @@
-import tensorflow as tf
 from ops import *
 from utils import *
 
@@ -146,7 +145,7 @@ def generator_unet_bak(image, is_training=True, reuse=False, name="generator"):
 
 def resnet50(image, is_training=True, name="resnet50"):
         input_layer = tl.layers.InputLayer(image)
-        c1 = tl.layers.PadLayer(input_layer, [[0,0], [3,3], [3,3], [0,0]], "SYMMETRIC")
+        c1 = tl.layers.PadLayer(input_layer, [[0,0], [3,3], [3,3], [0,0]], "REFLECT")
         c1 = tl.layers.Conv2dLayer(c1,
                                     shape=[7, 7, 3, 64],
                                     strides=[1, 2, 2, 1],
@@ -182,7 +181,7 @@ def residual_block(network, ch_out, strides, name, is_train, reuse=False):
         shortcut = network
 
         p = max(0, (1 - strides[1] + 1) // 2)
-        network = tl.layers.PadLayer(network, [[0,0], [p,p], [p,p], [0,0]], "SYMMETRIC")
+        network = tl.layers.PadLayer(network, [[0,0], [p,p], [p,p], [0,0]], "REFLECT")
         network = tl.layers.Conv2dLayer(network,
                                         shape=[1, 1, ch_in, ch_out],
                                         strides=strides,
@@ -197,7 +196,7 @@ def residual_block(network, ch_out, strides, name, is_train, reuse=False):
                                         gamma_init=tf.ones_initializer(),
                                         name='bn1')
                                         
-        network = tl.layers.PadLayer(network, [[0,0], [1,1], [1,1], [0,0]], "SYMMETRIC")
+        network = tl.layers.PadLayer(network, [[0,0], [1,1], [1,1], [0,0]], "REFLECT")
         network = tl.layers.Conv2dLayer(network,
                                         shape=[3, 3, ch_out, ch_out],
                                         strides=[1,1,1,1],
@@ -229,7 +228,7 @@ def residual_block(network, ch_out, strides, name, is_train, reuse=False):
 
         if ch_in != 4*ch_out:
             p = max(0, (1 - strides[1] + 1) // 2)
-            shortcut = tl.layers.PadLayer(shortcut, [[0,0], [p,p], [p,p], [0,0]], "SYMMETRIC")
+            shortcut = tl.layers.PadLayer(shortcut, [[0,0], [p,p], [p,p], [0,0]], "REFLECT")
             shortcut = tl.layers.Conv2dLayer(shortcut,
                                             shape=[1, 1, ch_in, 4*ch_out],
                                             strides=strides,

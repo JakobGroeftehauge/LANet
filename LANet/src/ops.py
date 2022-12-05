@@ -56,7 +56,7 @@ def dilated_conv2d(input_, output_dim, ks=3, rate=1, name='e_dlt1_1'):
         p1 = (ks-1)*rate // 2
         p2 = ((ks-1)*rate + 1) // 2
         paddings = tf.constant([[0, 0], [p1+ph, p2], [p1+pw, p2], [0, 0]])
-        input_ = tf.pad(input_, paddings, 'SYMMETRIC')
+        input_ = tf.pad(input_, paddings, 'REFLECT')
         net = tf.space_to_batch(input_, tf.constant([[0,0], [0,0]]), block_size=rate)
         net = slim.conv2d(net, output_dim, ks, 1, padding='VALID', activation_fn=None,
                            weights_initializer=tf.truncated_normal_initializer(stddev=0.02),
@@ -72,7 +72,7 @@ def deconv2d(input_, output_dim, ks=3, s=2, stddev=0.02, name="deconv2d"):
         p2 = ks // 2
         paddings = tf.constant([[0, 0], [p1, p2], [p1, p2], [0, 0]])
         resized = tf.image.resize_nearest_neighbor(input_, s * sz[1:3])
-        resized = tf.pad(resized, paddings, 'SYMMETRIC')
+        resized = tf.pad(resized, paddings, 'REFLECT')
         return slim.conv2d(resized, output_dim, ks, 1, padding='VALID', activation_fn=None,
                            weights_initializer=tf.truncated_normal_initializer(stddev=stddev),
                            biases_initializer=None)
